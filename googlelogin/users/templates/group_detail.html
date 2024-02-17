@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %} Home {% endblock %}
+{% block content%}
+<div>
+    <h1>Group Name: {{ group.group_name }}</h1>
+    <h1>{{group.total_amount}}</h1>
+    <ul>
+        {% for member in group.group_members.all %}
+        <li>{{ member.name }} - Share: {{ member.share }}</li>
+        {% empty %}
+        <!-- <li>No members yet.</li> -->
+        {% endfor %}
+    </ul>
+    <button><a href="{% url 'home' %}">Home</a></button>
+</div>
+{% endblock %}

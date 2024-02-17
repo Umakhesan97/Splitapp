@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %} Creating Group {% endblock %}
+{% block content%}
+<form method="POST" action="{% url 'create_group' %}">
+    {% csrf_token %}
+    {{ form.as_table }}
+    <button type="submit">Create Group</button>
+    <div>{{name}}</div>
+</form>
+{% endblock %}

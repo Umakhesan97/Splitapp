@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %} Sign in {% endblock %} 
+{% block content %}
+<div>
+  <div class="container-fluid custom_container">
+    <button type="button" class="btn btn-primary custom_button">
+      <a href="{% url 'social:begin' 'google-oauth2' %}">
+        <button type="button" class="btn btn-primary custom_button">Login with Google</button>
+      </a>
+    </div>
+</div>
+<style>
+.custom_button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #4A919E;
+}
+
+.custom_button a {
+    color: white;
+    text-decoration: none;
+}
+
+.custom_container {
+    background-color: #BED3C3;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+</style>
+{% endblock %}
