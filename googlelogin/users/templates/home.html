@@ -18,8 +18,8 @@
         </div>
       </div>  
       <div class="left_content">
-        <button class="btn btn-primary left_content_button">
-          <a href="{% url 'create_group' %}">Create Group</a>
+        <button class="left_content_button">
+          <a class="btn btn-primary" href="{% url 'create_group' %}">Create Group</a>
         </button>
       </div>
     </div>
@@ -30,7 +30,7 @@
         </div>
       </div>
         <div class="scroll-container group_names">
-          {% for group in groups|slice:":5" %}
+          {% for group in groups %}
               <button class="me-2 group_button btn btn-info">
                 <a href="{% url 'group_detail' group.id %}">{{ group.group_name }}</a>
                 <a>{{group.total_amount}}</a>
@@ -39,7 +39,7 @@
         </div>
     </div>   
     <div class="cus_content_right d-flex justify-content-center">
-      <div class="right_heading heading d-flex align-items-center justify-content-center">Calculations  </div>
+      <div class="heading d-flex align-items-center justify-content-center"></div>
     </div>
   </div>
 </div>
@@ -59,9 +59,6 @@
   .custom_button a {
   color: white;
   text-decoration: none;
-}
-.cus_content{
-    height: 100%;
 }
 .left_content input{
   height: 30px;
@@ -89,9 +86,6 @@
   height: 50px;
   margin-top: 15px;
   border-radius: 15px;
-}
-.right_heading {
-  background-color: #C6DBD3;
 }
 .left_heading {
   background-color: #C6DBD3;

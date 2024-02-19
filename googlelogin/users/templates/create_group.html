@@ -4,7 +4,7 @@
 <form method="POST" action="{% url 'create_group' %}">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Create Group</button>
+    <button class="btn btn-primary" type="submit">Create Group</button>
     <div>{{name}}</div>
 </form>
 {% endblock %}
