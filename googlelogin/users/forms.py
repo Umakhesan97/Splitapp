@@ -12,4 +12,3 @@ class UpdateCreatedForm(forms.Form):
     date = forms.CharField(max_length=10, help_text="DD/MM/YYYY")
     description = forms.CharField(max_length=100)
     expense_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
-    

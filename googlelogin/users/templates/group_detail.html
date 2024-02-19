@@ -8,6 +8,9 @@
         </button>
     </div>
     <div>
+        <a href="{% url 'edit_group' group.id %}">Edit group members</a>
+    </div>
+    <div>
         <h1>Group Name: {{ group.group_name }}</h1>
         <h1>Total Amount: {{group.total_amount}}</h1>
         <h1>Description: {{group.description}}</h1>

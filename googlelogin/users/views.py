@@ -34,12 +34,12 @@ def create_group(request):
             for member in initial_members:
                 group_member = GroupMembers.objects.create(name=member, group=group)
                 group_member.save()
-            return redirect('group_detail', group_id=group.id)
+            # return redirect('group_detail', group_id=group.id)
+                return redirect('home')
     return render(request, 'create_group.html', {'form': form})
 
 
 def group_detail(request, group_id):
-    print(" -- Request Method: " , request)
     group = get_object_or_404(Group, id=group_id)
     latest_expense = ExpenseTable.objects.filter(group=group)
     is_owner = request.user == group.owner
@@ -82,15 +82,49 @@ def group_detail(request, group_id):
             expense_list = ExpenseTable.objects.create(description=expense_description, date=expense_date, amount=expense_amount, group=group)
             expense_list.save()
             return redirect('group_detail', group_id=group.id)
-        
     else:
         update_amount = UpdateCreatedForm()
 
     return render(request, 'group_detail.html', {'group': group, 'update_amount': update_amount, 'expenseTable':latest_expense, 'is_owner': is_owner})
 
+def edit_group(request, group_id):
+    group = get_object_or_404(Group, id=group_id)
+    group_members = GroupMembers.objects.filter(group=group)
+    initial_members = ', '.join([member.name for member in group_members])
+
+    if request.method == 'POST':
+        form = GroupCreationForm(request.POST)
+        if form.is_valid():
+            # Update the corresponding data in the database
+            group.group_name = form.cleaned_data['group_name']
+            group.description = form.cleaned_data['description']
+            
+            # Update group members
+            new_members = [name.strip() for name in form.cleaned_data['initial_members'].split(',')]
+            existing_members = [member.name for member in group_members]
+
+            # Add new members
+            for new_member in set(new_members) - set(existing_members):
+                GroupMembers.objects.create(name=new_member, group=group)
+
+            # Remove members not present in the form
+            for old_member in set(existing_members) - set(new_members):
+                GroupMembers.objects.filter(name=old_member, group=group).delete()
+
+            group.save()
+
+            return redirect('home')  # Redirect to a success page or another view
+
+    else:
+        form = GroupCreationForm(initial={
+            'group_name': group.group_name,
+            'initial_members': initial_members,
+            'description': group.description,
+        })
+
+    return render(request, 'edit_group.html', {'group': group, 'form': form})
 
 def edit_expense(request, group_id):
-    print(" == Request Method: ", request)
     expense_id = request.POST.get('expense_id')
     group = get_object_or_404(Group, id=group_id)
     expense = get_object_or_404(ExpenseTable, group=group, id=expense_id)
@@ -128,7 +162,3 @@ def edit_expense(request, group_id):
         return redirect('group_detail', group_id=group_id)
 
     return render(request, 'edit_expense.html', {'form': form, 'group': group, 'group_id': group_id})
-
-
-
-
