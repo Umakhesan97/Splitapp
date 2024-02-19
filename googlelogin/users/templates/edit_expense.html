@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %} Home {% endblock %}
+{% block content%}
+<h1>edit expense page</h1>
+<div>
+    <button>
+        <a href="{% url 'home' %}">Home</a>
+    </button>
+</div>
+<form method="POST" action="{% url 'edit_expense' group.id %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" name="update">Submit</button>
+    <div>{{name}}</div>
+</form>
+{% endblock %}

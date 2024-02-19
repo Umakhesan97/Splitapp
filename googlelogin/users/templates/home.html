@@ -32,7 +32,6 @@
         <div class="scroll-container group_names">
           {% for group in groups|slice:":5" %}
               <button class="me-2 group_button btn btn-info">
-                <a>Date</a>
                 <a href="{% url 'group_detail' group.id %}">{{ group.group_name }}</a>
                 <a>{{group.total_amount}}</a>
               </button>

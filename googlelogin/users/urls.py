@@ -9,5 +9,6 @@ urlpatterns = [
     path('social-auth', include('social_django.urls', namespace='social')),
     path('', views.home, name='home'),
     path('create_group/', views.create_group, name='create_group'),
+    path('edit_expense/<int:group_id>/', views.edit_expense, name='edit_expense' ),
     path('group_detail/<int:group_id>/', views.group_detail, name='group_detail'),
 ]

@@ -1,16 +1,70 @@
 {% extends 'base.html' %}
 {% block title %} Home {% endblock %}
 {% block content%}
-<div>
-    <h1>Group Name: {{ group.group_name }}</h1>
-    <h1>{{group.total_amount}}</h1>
-    <ul>
-        {% for member in group.group_members.all %}
-        <li>{{ member.name }} - Share: {{ member.share }}</li>
-        {% empty %}
-        <!-- <li>No members yet.</li> -->
+<div class="container-fluid cus_container">
+    <div>
+        <button>
+            <a href="{% url 'home' %}">Home</a>
+        </button>
+    </div>
+    <div>
+        <h1>Group Name: {{ group.group_name }}</h1>
+        <h1>Total Amount: {{group.total_amount}}</h1>
+        <h1>Description: {{group.description}}</h1>
+        <ul>
+            {% for member in group.group_members.all %}
+            <li>{{ member.name }} - <strong>{{ member.share|floatformat:2 }}</strong></li>
+            {% empty %}
+            {% endfor %}
+        </ul>
+    </div>
+    <div>
+        <form method="POST" action="{% url 'group_detail' group.id %}">
+            {% csrf_token %}
+            {{update_amount.as_p}}
+            <button type="submit" class="btn btn-primary">Update Total Amount</button>
+            {% if not is_owner %}
+                <div class="alert alert-info">
+                    <strong>Info</strong> Group creater can delete the expense.
+                </div>
+            {% endif %}
+        </form>
+    </div>
+    {% if expenseTable %}
+        {% for item in expenseTable %}
+            <div class="d-flex justify-content-between cus_slip">
+                <div>{{ item.date }}</div>
+                <div>{{ item.description }}</div>
+                <div>{{ item.amount }}</div>
+                <form method="POST" action="{% url 'group_detail' group.id %}">
+                    {% csrf_token %}
+                        <input type="hidden" name="expense_id" value="{{ item.id }}">
+                    {% if is_owner %}
+                        <button class="btn btn-danger" type="submit" name="delete">Delete</button>
+                    {% endif %}
+                </form>
+                <form method="POST" action="{% url 'edit_expense' group.id %}">
+                    {% csrf_token %}
+                        <input type="hidden" name="expense_id" value="{{ item.id }}">
+                        <button class="btn btn-danger" type="submit">edit</button>
+                </form>
+            </div>
         {% endfor %}
-    </ul>
-    <button><a href="{% url 'home' %}">Home</a></button>
+    {% else %}
+        <p>No expenses available.</p>
+    {% endif %}
 </div>
+<style>
+    .cus_container{
+        background-color: #F6D7C4;
+        height: 100%;
+    }
+    .cus_slip{
+        background-color: #fff;
+        border-radius: 20px;
+        padding: 10px;
+        margin-bottom: 20px;
+        margin-top: 20px;
+    }
+</style>
 {% endblock %}

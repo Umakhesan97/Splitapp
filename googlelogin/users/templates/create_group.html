@@ -3,7 +3,7 @@
 {% block content%}
 <form method="POST" action="{% url 'create_group' %}">
     {% csrf_token %}
-    {{ form.as_table }}
+    {{ form.as_p }}
     <button type="submit">Create Group</button>
     <div>{{name}}</div>
 </form>
