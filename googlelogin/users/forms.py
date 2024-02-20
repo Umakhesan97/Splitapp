@@ -1,14 +1,47 @@
 # forms.py
 from django import forms
-from .models import ExpenseTable
+from .models import ExpenseTable, membersTable
+import re
 
 class GroupCreationForm(forms.Form):
-    group_name = forms.CharField(max_length=255, help_text="Describe your group name")
-    initial_members = forms.CharField(help_text="Enter emails or usernames separated by commas |  e.g. user1@email.com, user2, username3")
-    description = forms.CharField(max_length=300, help_text="Describe your Group Description")
+    group_name = forms.CharField(
+        max_length=255,
+        help_text="Describe your group name",
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    add_members = forms.CharField(
+        max_length=1000,
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'style': 'width: 90%'})
+        )
+    description = forms.CharField(
+        max_length=150,
+        help_text="Describe your Group Description",
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3})
+    )
 
 class UpdateCreatedForm(forms.Form):
-    total_amount = forms.IntegerField(min_value=0, help_text="Enter Amount for current expense")
-    date = forms.CharField(max_length=10, help_text="DD/MM/YYYY")
-    description = forms.CharField(max_length=100)
-    expense_id = forms.IntegerField(widget=forms.HiddenInput(), required=False)
+    total_amount = forms.IntegerField(
+        min_value=0,
+        help_text="Enter Amount for current expense",
+        widget=forms.NumberInput(attrs={'class': 'form-control'})
+    )
+    date = forms.CharField(
+        max_length=10,
+        help_text="DD/MM/YYYY",
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    description = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    expense_id = forms.IntegerField(
+        widget=forms.HiddenInput(),
+        required=False
+    )
+
+    def clean_date(self):
+        date = self.cleaned_data['date']
+        date_pattern = re.compile(r'^\d{2}/\d{2}/\d{4}$')
+        if not date_pattern.match(date):
+            raise forms.ValidationError('Invalid date format. Please use DD/MM/YYYY.')
+        return date

@@ -8,7 +8,9 @@
         </button>
     </div>
     <div>
-        <a href="{% url 'edit_group' group.id %}">Edit group members</a>
+        {% if not expenseTable %}
+            <a href="{% url 'edit_group' group.id %}">Add group members</a>
+        {% endif %}
     </div>
     <div>
         <h1>Group Name: {{ group.group_name }}</h1>
@@ -22,16 +24,18 @@
         </ul>
     </div>
     <div>
-        <form method="POST" action="{% url 'group_detail' group.id %}">
-            {% csrf_token %}
-            {{update_amount.as_p}}
-            <button type="submit" class="btn btn-primary">Update Total Amount</button>
-            {% if not is_owner %}
-                <div class="alert alert-info">
-                    <strong>Info</strong> Group creater can delete the expense.
-                </div>
-            {% endif %}
-        </form>
+        {% if is_member or is_owner %}
+            <form method="POST" action="{% url 'group_detail' group.id %}">
+                {% csrf_token %}
+                {{update_amount.as_p}}
+                    <button type="submit" class="btn btn-primary">Update Total Amount</button>
+                {% if not is_owner %}
+                    <div class="alert alert-info">
+                        <strong>Info</strong> Group creater can delete the expense.
+                    </div>
+                {% endif %}
+            </form>
+        {% endif %}
     </div>
     {% if expenseTable %}
         {% for item in expenseTable %}
@@ -46,11 +50,14 @@
                         <button class="btn btn-danger" type="submit" name="delete">Delete</button>
                     {% endif %}
                 </form>
-                <form method="POST" action="{% url 'edit_expense' group.id %}">
-                    {% csrf_token %}
-                        <input type="hidden" name="expense_id" value="{{ item.id }}">
-                        <button class="btn btn-danger" type="submit">edit</button>
-                </form>
+                
+                {% if is_member or is_owner %}
+                    <form method="POST" action="{% url 'edit_expense' group.id %}">
+                        {% csrf_token %}
+                            <input type="hidden" name="expense_id" value="{{ item.id }}">
+                            <button class="btn btn-danger" type="submit">edit</button>
+                    </form>
+                {% endif %}
             </div>
         {% endfor %}
     {% else %}
