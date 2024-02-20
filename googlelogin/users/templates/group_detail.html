@@ -28,6 +28,7 @@
             <form method="POST" action="{% url 'group_detail' group.id %}">
                 {% csrf_token %}
                 {{update_amount.as_p}}
+                {{ update_amount.date.errors }}
                     <button type="submit" class="btn btn-primary">Update Total Amount</button>
                 {% if not is_owner %}
                     <div class="alert alert-info">
