@@ -167,9 +167,7 @@ def edit_group(request, group_id):
             new_members = form.cleaned_data['add_members'].split(',')
             existing_members = [member.mail_id for member in membersTable.objects.all()]
             for new_member_email in new_members:
-                print('new_member_email : ', new_member_email)
                 new_member_email = new_member_email.strip()
-                print('new_member_email : ', new_member_email)
                 if new_member_email in existing_members:
                     print(f"{new_member_email} already exists in the memberstable.")
                 else:
@@ -179,8 +177,6 @@ def edit_group(request, group_id):
                         mail_id=new_member_email,
                         defaults={'user_name': user_name}
                     )
-                    if created:
-                        print(f"New member {new_member_email} added to membersTable.")
                     if not GroupMembers.objects.filter(name=table, group=group).exists():
                         group_member = GroupMembers.objects.create(name=table, group=group)
                         group_member.save()
