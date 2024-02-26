@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Group Invitation</title>
+</head>
+<body>
+    <p>Dear user,</p>
+    <p>You have been invited to join the group "{{ group_name }}""{{group_id}}".</p>
+    <p>Please click on the following links to either accept or decline the invitation:</p>
+    <!-- <a href="http://127.0.0.1:8000/"> -->
+    <!-- <a href="http://127.0.0.1:8000/accept-invitation/{{ user_email }}/{{ group_id }}/"> -->
+        <a href="http://127.0.0.1:8000/accept_invitation/{{ group_id }}/">
+        <button style="background-color: green; color: white;">Accept</button>
+    </a>
+    <a href="http://127.0.0.1:8000/decline_invitation/{{ group_id }}/">
+    <!-- <a href="https://yourwebsite.com/decline_invitation/{{ group_id }}/"> -->
+    <!-- <a href="http://127.0.0.1:8000/"> -->
+        <button style="background-color: red; color: white;">Decline</button>
+    </a>
+    <p>Thank you!</p>
+</body>
+</html>

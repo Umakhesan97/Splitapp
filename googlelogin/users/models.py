@@ -22,6 +22,7 @@ class GroupMembers(models.Model):
     group = models.ForeignKey('Group', on_delete=models.CASCADE, related_name="group_members", null=False, default=None)
     join_date = models.DateTimeField(auto_now_add=True)
     share = models.FloatField(null='False', default=0)
+    invitation_accepted = models.BooleanField(default=False)
 
 class ExpenseTable(models.Model):
     description = models.CharField(max_length=100, null=False, default=None)

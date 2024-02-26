@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -149,3 +150,14 @@ LOGOUT_REDIRECT_URL = 'login'
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '407777491495-g60ucqsqv7861gee6f63ldmq825pbfuo.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'testingsplitapp@gmail.com'
+# EMAIL_HOST_PASSWORD = 'ybrj vgnl kdid uhcc'
+EMAIL_HOST_USER = 'umakhesan13897@gmail.com'
+EMAIL_HOST_PASSWORD = 'zpem cmhv zmmc dilc'
+# EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')

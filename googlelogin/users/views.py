@@ -6,7 +6,8 @@ from .models import Group, GroupMembers, ExpenseTable, membersTable
 from django.db.models import Q
 from django.db import transaction
 from django.contrib.auth.models import User
-from django.db import transaction
+from django.template.loader import render_to_string
+from django.core.mail import send_mail
 
 
 # Create your views here.
@@ -16,12 +17,13 @@ def login(request):
 
 @login_required
 def home(request):
-    # groups = Group.objects.all()
     user = request.user
     user_mail_id = user.email
     user_name = str(user)
     owned_groups = Group.objects.filter(owner=user)
-    member_groups = Group.objects.filter(group_members__name__mail_id=user_mail_id)
+    member_groups = Group.objects.filter(
+        Q(group_members__name__mail_id=user_mail_id) & Q(group_members__invitation_accepted=1)
+    )
     groups = (owned_groups | member_groups).distinct()
 
     table = membersTable.objects.filter(mail_id=user_mail_id).first()
@@ -38,37 +40,14 @@ def user_logout(request):
     auth_logout(request)
     return redirect('login')
 
-# def create_group(request):
-#     form = GroupCreationForm()
+def send_acceptance_email(user_email, group_name, group_id):
+    subject = 'You have been added to {}'.format(group_name)
+    html_message = render_to_string('email_template.html', {'group_name': group_name, 'group_id': group_id})
+    message = 'Dear user, you have been added to the group "{}". Welcome!'.format(group_name)
+    from_email = 'testingsplitapp@gmail.com'
+    recipient_list = [user_email]
 
-#     if request.method == 'POST':
-#         form = GroupCreationForm(request.POST)
-
-#         if form.is_valid():
-#             group_name = form.cleaned_data['group_name']
-#             description = form.cleaned_data['description']
-#             initial_members = form.cleaned_data['add_members'].split(',')
-
-#             group = Group.objects.create(group_name=group_name, owner=request.user, description=description)
-
-#             with transaction.atomic():
-#                 for member_email in initial_members:
-#                     user_name = member_email.split('@')[0]
-
-#                     # Check if the email already exists in membersTable
-#                     member_instance, created = membersTable.objects.get_or_create(
-#                         mail_id=member_email,
-#                         defaults={'user_name': user_name}
-#                     )
-
-#                     # Check if the member is not already part of the group
-#                     if not GroupMembers.objects.filter(name=member_instance, group=group).exists():
-#                         group_member = GroupMembers.objects.create(name=member_instance, group=group)
-#                         group_member.save()
-
-#             return redirect('home')  # Moved the redirect outside the loop
-
-#     return render(request, 'create_group.html', {'form': form})
+    send_mail(subject, message, from_email, recipient_list, html_message=html_message, fail_silently=False)
 
 def create_group(request):
     form = GroupCreationForm()
@@ -86,21 +65,42 @@ def create_group(request):
             with transaction.atomic():
                 for member_email in initial_members:
                     user_name = member_email.split('@')[0]
-
-                    # Check if the email already exists in membersTable
                     member_instance, created = membersTable.objects.get_or_create(
                         mail_id=member_email,
                         defaults={'user_name': user_name}
                     )
-
-                    # Check if the member is not already part of the group
+                    group_id = group.id
+                    send_acceptance_email(member_email, group_name, group_id)
                     if not GroupMembers.objects.filter(name=member_instance, group=group).exists():
                         group_member = GroupMembers.objects.create(name=member_instance, group=group)
                         group_member.save()
-
-            return redirect('home')  # Moved the redirect outside the loop
+            return redirect('home')
 
     return render(request, 'create_group.html', {'form': form})
+
+@login_required
+def accept_invitation(request, group_id):
+    try:
+        members_table = membersTable.objects.get(mail_id=request.user.email)
+        group_member = GroupMembers.objects.get(name=members_table, group_id=group_id)
+        group_member.invitation_accepted = 1
+        group_member.group_id = group_id
+        group_member.save()
+    except membersTable.DoesNotExist:
+        pass
+    return redirect('home')
+
+@login_required
+def decline_invitation(request, group_id):
+    try:
+        members_table = membersTable.objects.get(mail_id=request.user.email)
+        group_member = GroupMembers.objects.get(name=members_table, group_id=group_id)
+        group_member.invitation_accepted = 0
+        group_member.group_id = group_id  # Set the group_id based on the last number
+        group_member.save()
+    except membersTable.DoesNotExist:
+        pass
+    return redirect('home')
 
 def group_detail(request, group_id):
     
