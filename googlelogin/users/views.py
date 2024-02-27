@@ -49,6 +49,17 @@ def send_acceptance_email(user_email, group_name, group_id):
 
     send_mail(subject, message, from_email, recipient_list, html_message=html_message, fail_silently=False)
 
+def send_amount_email(user_email, group_name, group_id, user_share, total_amount):
+    # subject = 'You have been added to {}'.format(group_name)
+    subject = 'Your '.format(group_name),' group have added expense. Total expense : '.format(total_amount)
+    # html_message = render_to_string('email_template.html', {'group_name': group_name, 'group_id': group_id})
+    html_message = render_to_string('update_amount_template.html', {'group_name': group_name, 'group_id': group_id, 'total_amount': total_amount, 'user_share': user_share})
+    message = 'Dear user, your share is '.format(user_share)
+    from_email = 'testingsplitapp@gmail.com'
+    recipient_list = [user_email]
+
+    send_mail(subject, message, from_email, recipient_list, html_message=html_message, fail_silently=False)
+
 def create_group(request):
     form = GroupCreationForm()
 
@@ -141,6 +152,19 @@ def group_detail(request, group_id):
             total_members = len(group_members)
             for member in group_members:
                 member.share += total_amount / total_members
+                total_amount =total_amount
+                share = member.share
+                group_id= group_id
+                group_name = group.group_name
+                for member in group_members:
+                    # Assuming `name_id` is the foreign key to `membersTable`
+                    member_name_id = member.name_id
+                    members_mail_id = membersTable.objects.get(id=member_name_id).mail_id
+                    user_email=members_mail_id
+                    group_name=group_name
+                    group_id=group_id
+                    user_share=share
+                    send_amount_email(user_email, group_name, group_id, user_share, total_amount)
                 member.save()
             expense_description = update_amount_input.cleaned_data['description']
             expense_date = update_amount_input.cleaned_data['date']
@@ -180,6 +204,7 @@ def edit_group(request, group_id):
                     if not GroupMembers.objects.filter(name=table, group=group).exists():
                         group_member = GroupMembers.objects.create(name=table, group=group)
                         group_member.save()
+                        send_acceptance_email(user_email=new_member_email, group_name=group.group_name, group_id=group.id)
 
             group.save()
             total_members = len(group_members)
