@@ -1,16 +1,21 @@
 {% extends 'base.html' %}
 {% block title %} Home {% endblock %}
 {% block content%}
-<h1>edit expense page</h1>
-<div>
-    <button>
-        <a href="{% url 'home' %}">Home</a>
-    </button>
+
+<div class="edit_container shadow">
+    <h1 class="text-center">Edit expense</h1>
+    <form method="POST" action="{% url 'edit_expense' group.id %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-primary" type="submit" name="update">Submit</button>
+        <div>{{name}}</div>
+    </form>
 </div>
-<form method="POST" action="{% url 'edit_expense' group.id %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button class="btn btn-primary" type="submit" name="update">Submit</button>
-    <div>{{name}}</div>
-</form>
+<style>
+    .edit_container{
+        background-color: rgb(235, 235, 235);
+        padding: 20px;
+        border-radius: 25px;
+    }
+</style>
 {% endblock %}

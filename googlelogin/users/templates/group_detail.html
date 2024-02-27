@@ -2,20 +2,15 @@
 {% block title %} Home {% endblock %}
 {% block content%}
 <div class="container-fluid cus_container">
-    <div>
-        <button>
-            <a href="{% url 'home' %}">Home</a>
-        </button>
-    </div>
-    <div>
+    <div class="add_members">
         {% if not expenseTable %}
             <a href="{% url 'edit_group' group.id %}">Add group members</a>
         {% endif %}
     </div>
     <div>
-        <h1>Group Name: {{ group.group_name }}</h1>
-        <h1>Total Amount: {{group.total_amount}}</h1>
-        <h1>Description: {{group.description}}</h1>
+        <h1>{{ group.group_name }}</h1>
+        <h4>Total Amount: {{group.total_amount}}</h4>
+        <h6>{{group.description}}</h6>
         <ul>
             {% for member in group.group_members.all %}
             <li>{{ member.name }} - <strong>{{ member.share|floatformat:2 }}</strong></li>
@@ -23,7 +18,7 @@
             {% endfor %}
         </ul>
     </div>
-    <div>
+    <div class="mb-4">
         {% if is_member or is_owner %}
             <form method="POST" action="{% url 'group_detail' group.id %}">
                 {% csrf_token %}
@@ -40,26 +35,33 @@
     </div>
     {% if expenseTable %}
         {% for item in expenseTable %}
-            <div class="d-flex justify-content-between cus_slip">
-                <div>{{ item.date }}</div>
-                <div>{{ item.description }}</div>
-                <div>{{ item.amount }}</div>
-                <form method="POST" action="{% url 'group_detail' group.id %}">
-                    {% csrf_token %}
-                        <input type="hidden" name="expense_id" value="{{ item.id }}">
-                    {% if is_owner %}
-                        <button class="btn btn-danger" type="submit" name="delete">Delete</button>
-                    {% endif %}
-                </form>
-                
-                {% if is_member or is_owner %}
-                    <form method="POST" action="{% url 'edit_expense' group.id %}">
-                        {% csrf_token %}
-                            <input type="hidden" name="expense_id" value="{{ item.id }}">
-                            <button class="btn btn-danger" type="submit">edit</button>
-                    </form>
-                {% endif %}
-            </div>
+            <div class="card cus-slip">
+                <div class="card-body d-flex justify-content-between">
+                    <div>
+                        <p class="card-text">{{ item.date }}</p>
+                        <h5 class="card-title">{{ item.description }}</h5>
+                    </div>
+                    <div class="ml-auto">
+                        <h5 class="card-title">{{ item.amount }}</h5>
+                        <div class="d-flex justify-content-center align-items-center">
+                            <form method="POST" action="{% url 'group_detail' group.id %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="expense_id" value="{{ item.id }}">
+                                {% if is_owner %}
+                                    <button class="btn btn-danger" type="submit" name="delete">Delete</button>
+                                {% endif %}
+                            </form>
+                            {% if is_member or is_owner %}
+                                <form method="POST" action="{% url 'edit_expense' group.id %}" style="margin-left: 20px;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="expense_id" value="{{ item.id }}">
+                                    <button class="btn btn-danger" type="submit">Edit</button>
+                                </form>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>        
         {% endfor %}
     {% else %}
         <p>No expenses available.</p>
@@ -67,8 +69,9 @@
 </div>
 <style>
     .cus_container{
-        background-color: #F6D7C4;
+        background-color: lightgray;
         height: 100%;
+        padding: 20px;
     }
     .cus_slip{
         background-color: #fff;
@@ -76,6 +79,18 @@
         padding: 10px;
         margin-bottom: 20px;
         margin-top: 20px;
+    }
+    .add_members{
+        position: absolute;
+        top: 120px;
+        right: 80px;
+    }
+    .add_members a{
+        text-decoration: none;
+        color: #fff;
+        padding: 20px;
+        background-color: grey;
+        border-radius: 100px;
     }
 </style>
 {% endblock %}

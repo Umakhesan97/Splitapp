@@ -5,18 +5,19 @@ import re
 
 class GroupCreationForm(forms.Form):
     group_name = forms.CharField(
-        max_length=255,
+        max_length=150,
         help_text="Describe your group name",
-        widget=forms.TextInput(attrs={'class': 'form-control'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'style': 'width: 100%;'})
     )
     add_members = forms.CharField(
         max_length=1000,
-        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'style': 'width: 90%'})
+        help_text="Add group members",
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'style': 'width: 100%;'})
         )
     description = forms.CharField(
         max_length=150,
         help_text="Describe your Group Description",
-        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3})
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 2, 'style': 'width: 100%;'})
     )
 
 class UpdateCreatedForm(forms.Form):

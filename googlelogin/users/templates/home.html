@@ -1,122 +1,102 @@
 {% extends 'base.html' %}
 {% block title %} Home {% endblock %}
-{% block content%}
-<div class="main_container">
-  <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center text-white top_bar">
-      <h4 class="logo">SPLIT APP</h4>
-      <h5 class="text-dark"><strong>User name : </strong>{{ user_name }}</h5>
-      <button class="btn btn-primary custom_button">
-        <a href="{% url 'logout' %}">Logout</a> 
-      </button>
-    </div>
-  </div>
+{% block content %}
+<div class="main_container shadow" style="margin-top: 100px;">
   <div class="cus_content text-center d-flex">
-    <div class="cus_content_left d-flex-column">
-      <div class="d-flex align-items-center justify-content-center">
-        <div class="left_heading heading d-flex align-items-center justify-content-center">
-          <span>Group Management</span>
-        </div>
-      </div>  
-      <div class="left_content">
-        <button class="left_content_button">
-          <a class="btn btn-primary" href="{% url 'create_group' %}">Create Group</a>
-        </button>
+    <div class="cus_content_center">
+      <div class="center_heading heading">
+        <span>Groups</span>
       </div>
-    </div>
-    <div class="cus_content_center d-flex-column">
-      <div class="d-flex align-items-center justify-content-center">
-        <div class="center_heading heading d-flex align-items-center justify-content-center">
-          <span>Groups</span>
-        </div>
+      <div class="scroll-container group_names">
+        {% for group in groups %}
+          <button class="me-2 group_button btn btn-info">
+            <a href="{% url 'group_detail' group.id %}">{{ group.group_name }}</a>
+            <a>{{group.total_amount}}</a>
+          </button>
+        {% endfor %}
       </div>
-        <div class="scroll-container group_names">
-          {% for group in groups %}
-              <button class="me-2 group_button btn btn-info">
-                <a href="{% url 'group_detail' group.id %}">{{ group.group_name }}</a>
-                <a>{{group.total_amount}}</a>
-              </button>
-          {% endfor %}
-        </div>
     </div>   
-    <div class="cus_content_right d-flex justify-content-center">
-      <div class="heading d-flex align-items-center justify-content-center"></div>
-    </div>
+  </div>
+  <div class="cus_button_group">
+    <button class="left_content_button cus_button">
+      <a class="btn btn-primary" href="{% url 'create_group' %}">Create Group</a>
+    </button>
   </div>
 </div>
 <style>
-  .main_container{
-    background-color: white;  
+  .main_container {
     height: 100vh;
+    display: flex;
+    justify-content: space-around;
+    align-items: stretch;
   }
-  .logo{
-    cursor: pointer;
-    color: black;
+
+  .cus_content_left, 
+  .cus_content_right {
+    flex: 1;
+    background-color: #F6D7C4;
+    padding: 20px;
+    border-radius: 15px;
+    margin: 10px;
   }
-  .top_bar{
-  background-color: white;
-  height: 4em;
-}
-  .custom_button a {
-  color: white;
-  text-decoration: none;
-}
-.left_content input{
-  height: 30px;
-  padding-left: 5px;
-  border-radius: 5px;
-}
-.left_content_button{
-  margin-top: 160px;
-}
-.cus_content_left, 
-.cus_content_right{
-  width: 25%;
-  background-color: #F6D7C4;
-}
-.cus_content_center{
-  background-color: #C6DBD3;
-  width: 50%;
-}
-.text{
-  text-align: left;
-  margin-left: 35px;
-}
-.heading {
-  width: 175px;
-  height: 50px;
-  margin-top: 15px;
-  border-radius: 15px;
-}
-.left_heading {
-  background-color: #C6DBD3;
-}
-.center_heading {
-  margin-bottom: 30px;
-  background-color: #F6D7C4;
-}
-.left_content_button a {
+
+  .cus_content_center {
+    flex: 2;
+    background-color: lightgray;
+    padding: 20px;
+    border-radius: 15px;
+    margin: 10px;
+    overflow: auto;  /* Added overflow property to allow scrolling if needed */
+  }
+
+  .left_heading, .center_heading {
+    width: 100%;
+    height: 50px;
+    margin-top: 15px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .center_heading {
+    margin-bottom: 30px;
+    background-color: #fff;
+  }
+
+  .left_content_button a {
     color: white;
     text-decoration: none;
-}
-.group_names{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.group_button{
-  width: 90%;
-  height: 30px;
-  margin-bottom: 20px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-}
-.group_button a{
-  text-decoration: none;
-  color: black;
-  display: flex;
-}
+  }
+
+  .group_names {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .group_button {
+    width: 100%;
+    height: 30px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  .group_button a {
+    text-decoration: none;
+    color: black;
+    display: flex;
+  }
+  .cus_content{
+    width: 80vw;
+  }
+  .cus_button_group{
+    position: absolute;
+    top: 60px;
+    left: 50px;
+    z-index: 1;
+  }
 </style>
 {% endblock %}
